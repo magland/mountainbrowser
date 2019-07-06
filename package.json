@@ -9,8 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd client && yarn build",
-    "heroku-postbuild": "cd client && yarn install --dev && npm run build",
-    "start": "node server/index.js"
+    "postinstall": "cd client && yarn install && yarn run build",
+    "start": "yarn start"
   },
   "author": "Jeremy Magland",
   "license": "Apache-2.0",
