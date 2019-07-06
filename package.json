@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "cd client && yarn build",
     "postinstall": "cd client && yarn install --production=false && yarn run build",
-    "start": "yarn start"
+    "start": "node server/index.js"
   },
   "author": "Jeremy Magland",
   "license": "Apache-2.0",
