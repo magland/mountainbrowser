@@ -383,6 +383,7 @@ function LocalFileCache(sha1_cache_dir) {
   }
 
   function mkdir_if_not_exist(path) {
+    const fs = require('fs');
     if (!fs.existsSync(path)) {
       fs.mkdirSync(path);
     }
