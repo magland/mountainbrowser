@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --devtool source-map --mode production && cp public/index.html dist/index.html",
-    "watch": "webpack --watch --devtool source-map --mode production",
+    "build": "echo \"building bundle\" && webpack --devtool source-map --mode production && cp public/index.html dist/index.html",
+    "watch": "webpack --watch --verbose --devtool source-map --mode production",
     "postinstall": "link-module-alias"
   },
   "author": "Jeremy Magland",
