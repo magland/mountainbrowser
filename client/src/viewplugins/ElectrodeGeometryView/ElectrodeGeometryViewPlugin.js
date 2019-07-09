@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ElectrodeGeometryWidget from "./ElectrodeGeometryWidget";
+import { ElectrodeGeometryWidget } from "@spikeforestwidgets-js";
 
 const axios = require('axios');
 
