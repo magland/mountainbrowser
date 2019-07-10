@@ -79,10 +79,8 @@ function determineLanguageFromFilePath(path) {
         '.html': 'html',
         '.md': 'markdown'
     };
-    console.log('-------------------', path);
     for (let key in map) {
         if (path.endsWith(key)) {
-            console.log('---------------- using', map[key]);
             return map[key];
         }
     }
