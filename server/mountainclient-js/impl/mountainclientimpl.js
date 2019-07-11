@@ -49,6 +49,10 @@ function MountainClientImpl() {
     if (!obj.success) return null;
     return obj.value;
   }
+  this.resolveKeyPath = async function(path, opts) {
+    let txt = await resolve_key_path(path);
+    return txt;
+  }
   this.loadObject = async function(path, opts) {
     let txt = await this.loadText(path, opts);
     if (!txt) return null;
@@ -224,7 +228,7 @@ function MountainClientImpl() {
         return null;
       }
       if (a.extra_path) {
-        val = val + '/' + extra_path;
+        val = val + '/' + a.extra_path;
       }
       return val;
     }

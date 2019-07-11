@@ -22,7 +22,7 @@ const StyledTreeNode = styled.div`
   cursor: pointer;
 
   &.selected {
-    background: #F2F2F2;
+    background: #E2E2E2;
   }
 
   // &:hover {
@@ -66,7 +66,7 @@ const TreeNode = (props) => {
   return (
     <React.Fragment>
       <StyledTreeNode level={level} type={node.type} className={(node === selectedNode ) ? 'selected' : '' } onClick={() => onNodeSelect(node)}>
-        <NodeIcon onClick={() => onToggle(node)}>
+        <NodeIcon onClick={(e) => {e.stopPropagation(); onToggle(node)}}>
           { node.type === 'dir' && (isExpanded ? <FaChevronDown /> : <FaChevronRight />) }
           { node.type === 'object' && (isExpanded ? <FaChevronDown /> : <FaChevronRight />) }
           { node.type === 'array-parent' && (isExpanded ? <FaChevronDown /> : <FaChevronRight />) }

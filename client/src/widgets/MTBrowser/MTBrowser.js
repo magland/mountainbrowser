@@ -18,7 +18,7 @@ const ButtonIcon = styled.div`
   &.enabled {
     cursor: pointer;
     :hover {
-        background: #F5F5F5;
+        background: #E5E5E5;
     }
   }
 
@@ -31,12 +31,12 @@ const ButtonIcon = styled.div`
 const HistoryLine = styled.div`
   height:8px;
   width: 100%;
-  background: #F2F2F2;
+  background: #E2E2E2;
   cursor: arrow;
   margin-top: 6px;
 
   :hover {
-    border: solid 1px gray;
+    background: gray;
   }
 `;
 
@@ -233,6 +233,7 @@ export class MTBrowser extends Component {
         }
         this.setState({
             path: path,
+    
             inputPath: path,
             pathHistory: [ ...this.state.pathHistory, this.state.path]
         });
@@ -288,7 +289,7 @@ export class MTBrowser extends Component {
         let mainContent;
         if (this.state.status === 'loaded') {
             mainContent = <Row noGutters={true}>
-                <Col md={6} lg={4} xl={3}>
+                <Col md={6} lg={5}>
                     {this.state.pathHistory.map((p, ind) => <HistoryLine title={p} onClick={() => {this.handleHistoryLine(ind)}} />)}
                     <Tree
                         rootNode={rootNode}
@@ -296,7 +297,7 @@ export class MTBrowser extends Component {
                         onSelect={(node) => { this.onSelect(node); }}
                     />
                 </Col>
-                <Col md={'auto'}>
+                <Col md={6} lg={7}>
                     <FileView
                         node={selectedNode ? selectedNode : null}
                         viewPlugins={this.viewPluginsList}
@@ -325,24 +326,51 @@ MTBrowser.propTypes = {
 }
 
 async function loadDirectory(path) {
-    let vals = path.split('/');
-    if (vals[0] !== 'sha1dir:') {
-        return null;
+    let X;
+    if (path.startsWith('key://')) {
+        console.log('a', path);
+        path = await resolveKeyPath(path);
+        console.log('b', path);
+        if (!path) return null;
     }
-    vals[2] = vals[2].split('.')[0];
-    let X = await loadObject(`sha1://${vals[2]}`);
-    if (!X) return;
-    for (let i = 3; i < vals.length; i++) {
-        if (vals[i]) {
-            if ((X.dirs) && (vals[i] in X.dirs)) {
-                X = X.dirs[vals[i]];
-            }
-            else {
-                return null;
+    if (path.startsWith('sha1dir://')) {
+        let vals = path.split('/');
+        vals[2] = vals[2].split('.')[0];
+        X = await loadObject(`sha1://${vals[2]}`);
+        if (!X) return null;
+        for (let i = 3; i < vals.length; i++) {
+            if (vals[i]) {
+                if ((X.dirs) && (vals[i] in X.dirs)) {
+                    X = X.dirs[vals[i]];
+                }
+                else {
+                    return null;
+                }
             }
         }
     }
+    else {
+        return null;
+    }
+    
     return X;
+}
+
+async function resolveKeyPath(path) {
+    let response;
+    try {
+        response = await axios.get(`/api/resolveKeyPath?path=${encodeURIComponent(path)}`);
+    }
+    catch (err) {
+        console.error(err);
+        console.error(`Problem resolving key path: ${path}`);
+        return null;
+    }
+    let rr = response.data;
+    if (rr.success) {
+        return rr.text;
+    }
+    else return null;
 }
 
 async function loadObject(path, opts) {

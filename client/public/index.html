@@ -15,6 +15,7 @@
     // TODO: do this without the delay
     setTimeout(function () {
       let path = getUrlParameter('path');
+      console.log('---- path=', path);
       if (!path) {
         window.show_default_mtbrowser();
       }
@@ -24,6 +25,7 @@
     }, 500);
 
     function getUrlParameter(name) {
+      console.log('-------------- location.search', location.search);
       name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
       var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
       var results = regex.exec(location.search);
@@ -31,15 +33,14 @@
     };
   </script>
 
-<link
-  rel="stylesheet"
-  href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-  crossorigin="anonymous"
-/>
+  <!-- auto reload client when something has changed -->
+  <script src="/reload/reload.js"></script>
 
-<!-- For syntax highlighting -->
-<link rel="stylesheet" href="https://highlightjs.org/static/demo/styles/railscasts.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+
+  <!-- For syntax highlighting -->
+  <link rel="stylesheet" href="https://highlightjs.org/static/demo/styles/railscasts.css" />
 
   <title>MTBrowser</title>
 </head>

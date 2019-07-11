@@ -17,6 +17,10 @@ function MountainClient() {
   this.getValue = async function(opts) {
     return await impl.getValue(opts);
   }
+  this.resolveKeyPath = async function(path, opts) {
+    opts=opts||{};
+    return await impl.resolveKeyPath(path, opts);
+  }
   this.readDir = async function(path, opts) {
     opts=opts||{};
     return await impl.readDir(path, opts);

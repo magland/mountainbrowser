@@ -19,9 +19,11 @@
     "axios": "^0.19.0",
     "express": "^4.17.1",
     "json-stable-stringify": "^1.0.1",
-    "text-encoding": "^0.7.0"
+    "text-encoding": "^0.7.0",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
-    "concurrently": "^4.1.1"
+    "concurrently": "^4.1.1",
+    "reload": "^3.0.1"
   }
 }

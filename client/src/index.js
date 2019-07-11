@@ -12,7 +12,9 @@ const show_mtbrowser = async (path) => {
 };
 
 const show_default_mtbrowser = async () => {
-    const gallery_path = 'sha1dir://d55cf60dea55b7f33f83e7756237137f54667460.mtbrowser_gallery';
+    // in future use key path here
+    // const gallery_path = 'sha1dir://b950b6a3ec81d481b8c19b03a23e9a5747c71b38.gallery';
+    const gallery_path = 'key://pairio/spikeforest/gallery';
     await show_mtbrowser(gallery_path);
 }
 

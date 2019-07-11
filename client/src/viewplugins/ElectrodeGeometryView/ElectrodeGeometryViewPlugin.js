@@ -31,10 +31,10 @@ class ElectrodeGeometryView extends Component {
         if (!this.state.locations) {
             return <div></div>;
         }
-        return <ElectrodeGeometryWidget
+        return <div><ElectrodeGeometryWidget
             locations={this.state.locations}
             labels={this.state.labels}
-        />;
+        /></div>;
     }
 }
 

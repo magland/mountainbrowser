@@ -8,27 +8,43 @@ export default class FileContentView extends Component {
         super(props);
         this.state = {
             fileContent: null,
-            fileContentStatus: 'not-loading'
+            fileContentStatus: 'not-loading',
+            showContent: false
         };
     }
 
     async componentDidMount() {
-        await this.updateContent();
-    }
-
-    async componentDidUpdate(prevProps) {
-        if ((prevProps.path !== this.props.path) || (prevProps.size !== this.props.size)) {
+        console.log('--- mount');
+        this.setState({ showContent: this.props.showContent });
+        if (this.state.showContent) {
             await this.updateContent();
         }
     }
 
+    async componentDidUpdate(prevProps, prevState) {
+        console.log('--- update');
+        if ((prevProps.path !== this.props.path) || (prevProps.size !== this.props.size) || (prevState.showContent != this.state.showContent)) {
+            if (this.state.showContent) {
+                await this.updateContent();
+            }
+        }
+    }
+
     async updateContent() {
-        let { path, size } = this.props;
+        const { path, size } = this.props;
+        const max_size = 100000;
         this.setState({
             fileContentStatus: 'not-loading',
             fileContent: null
         });
-        if (size < 10000) {
+
+        if (size > max_size) {
+            this.setState({
+                fileContentStatus: `Cannot load file content, size exceeds maximum (${size} > ${max_size})`
+            });
+            return;
+        }
+        if (this.state.showContent) {
             this.setState({
                 fileContentStatus: 'loading'
             });
@@ -60,14 +76,28 @@ export default class FileContentView extends Component {
             </Highlight>
         }
         else {
-            return <div></div>;
+            return <div>{this.state.fileContentStatus}</div>;
         }
     }
 
+    handleShowFileContent = () => {
+        this.setState({
+            showContent: true
+        });
+    }
+
     render() {
-        return <div style={{overflow: 'auto', height: '300px'}}>
-            {this.getContentElement()}
-        </div>
+        if (this.state.showContent) {
+            return <div>
+                <div style={{ overflow: 'auto', height: '300px' }}>
+                    {this.getContentElement()}
+                </div>
+                <button onClick={() => { this.setState({ showContent: false }) }}>Hide file content</button>
+            </div>
+        }
+        else {
+            return <button onClick={() => { this.setState({ showContent: true }) }}>Show file content</button>;
+        }
     }
 }
 
