@@ -6,13 +6,13 @@ const stable_stringify = require('json-stable-stringify');
 const textEncoding = require('text-encoding');
 const TextDecoder = textEncoding.TextDecoder;
 
-function MountainClientImpl() {
+function MountainClientImpl(fs) {
   let that = this;
   let m_pairio_url = process.env.PAIRIO_URL||'http://pairio.org';
   let m_sha1_cache_dir = process.env.SHA1_CACHE_DIR || process.env.KBUCKET_CACHE_DIR || '/tmp/sha1-cache';
   let m_download_from = [];
   let m_memory_cache = new MemoryCache();
-  let m_local_file_cache = new LocalFileCache(m_sha1_cache_dir);
+  let m_local_file_cache = new LocalFileCache(m_sha1_cache_dir, fs);
   let m_kachery_urls = {};
 
   this.setParioUrl = function(url) {
@@ -355,10 +355,10 @@ function MemoryCache() {
   }
 }
 
-function LocalFileCache(sha1_cache_dir) {
+function LocalFileCache(sha1_cache_dir, fs) {
   this.getBinaryForSha1 = async function(sha1) {
+    if (!fs) return null;
     if (!sha1_cache_dir) return null;
-    const fs = require('fs');
     const util = require('util');
     let exists = util.promisify(fs.exists);
     let readFile = util.promisify(fs.readFile);
@@ -369,8 +369,8 @@ function LocalFileCache(sha1_cache_dir) {
     return buf;
   }
   this.setBinaryForSha1 = async function(sha1, data) {
+    if (!fs) return null;
     if (!sha1_cache_dir) return null;
-    const fs = require('fs');
     const util = require('util');
     let exists = util.promisify(fs.exists);
     let writeFile = util.promisify(fs.writeFile);
@@ -387,7 +387,7 @@ function LocalFileCache(sha1_cache_dir) {
   }
 
   function mkdir_if_not_exist(path) {
-    const fs = require('fs');
+    if (!fs) return null;
     if (!fs.existsSync(path)) {
       fs.mkdirSync(path);
     }

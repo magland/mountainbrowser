@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Plot from 'react-plotly.js';
 // import { UnitWaveformsWidget } from "@spikeforestwidgets-js";
 
-const axios = require('axios');
+const MountainClient = require('@mountainclient-js').MountainClient;
 
 class UnitWaveformsWidget extends Component {
     constructor(props) {
@@ -135,7 +135,7 @@ class UnitWaveformsView extends Component {
 
     render() {
         if (!this.state.averageWaveform) {
-            return <div>test1x</div>;
+            return <div>Loading...</div>;
         }
         return <UnitWaveformsWidget
             averageWaveform={this.state.averageWaveform}
@@ -159,32 +159,35 @@ export default class UnitWaveformsViewPlugin {
 };
 
 async function load_average_waveform(path) {
-    let obj = await loadObject(path, {});
+    let mt = new MountainClient();
+    mt.configDownloadFrom(['spikeforest.public']);
+
+    let obj = await mt.loadObject(path, {});
     if (!obj) return null;
     return obj['waveform'] || null;
 }
 
-async function loadObject(path, opts) {
-    if (!path) {
-        if ((opts.key) && (opts.collection)) {
-            path = `key://pairio/${opts.collection}/~${hash_of_key(opts.key)}`;
-        }
-    }
-    let response;
-    try {
-        response = await axios.get(`/api/loadObject?path=${encodeURIComponent(path)}`);
-    }
-    catch (err) {
-        console.error(err);
-        console.error(`Problem loading object: ${path}`);
-        return null;
-    }
-    let rr = response.data;
-    if (rr.success) {
-        return rr.object;
-    }
-    else return null;
-}
+// async function loadObject(path, opts) {
+//     if (!path) {
+//         if ((opts.key) && (opts.collection)) {
+//             path = `key://pairio/${opts.collection}/~${hash_of_key(opts.key)}`;
+//         }
+//     }
+//     let response;
+//     try {
+//         response = await axios.get(`/api/loadObject?path=${encodeURIComponent(path)}`);
+//     }
+//     catch (err) {
+//         console.error(err);
+//         console.error(`Problem loading object: ${path}`);
+//         return null;
+//     }
+//     let rr = response.data;
+//     if (rr.success) {
+//         return rr.object;
+//     }
+//     else return null;
+// }
 
 function baseName(str) {
     var base = new String(str).substring(str.lastIndexOf('/') + 1);

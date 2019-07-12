@@ -66,13 +66,13 @@ const TreeNode = (props) => {
   return (
     <React.Fragment>
       <StyledTreeNode level={level} type={node.type} className={(node === selectedNode ) ? 'selected' : '' } onClick={() => onNodeSelect(node)}>
-        <NodeIcon onClick={(e) => {e.stopPropagation(); onToggle(node)}}>
+        <NodeIcon key={'expanded-icon'} onClick={(e) => {e.stopPropagation(); onToggle(node)}}>
           { node.type === 'dir' && (isExpanded ? <FaChevronDown /> : <FaChevronRight />) }
           { node.type === 'object' && (isExpanded ? <FaChevronDown /> : <FaChevronRight />) }
           { node.type === 'array-parent' && (isExpanded ? <FaChevronDown /> : <FaChevronRight />) }
         </NodeIcon>
         
-        <NodeIcon marginRight={10}>
+        <NodeIcon key={'item-icon'} marginRight={10}>
           { node.type === 'file' && <FaFile /> }
           { node.type === 'value' && <FaBed /> }
           { node.type === 'dir' && isExpanded && <FaFolderOpen /> }
@@ -84,7 +84,7 @@ const TreeNode = (props) => {
         </NodeIcon>
         
 
-        <span role="button" style={{cursor: 'pointer'}}>
+        <span key={'label'} role="button" style={{cursor: 'pointer'}}>
           { getNodeLabel(node) }
         </span>
       </StyledTreeNode>
@@ -92,6 +92,7 @@ const TreeNode = (props) => {
       { isExpanded && getChildNodes(node).map(childNode => (
         <TreeNode 
           {...props}
+          key={childNode.path}
           node={childNode}
           level={level + 1}
         />

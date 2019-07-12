@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ElectrodeGeometryWidget } from "@spikeforestwidgets-js";
 
-const axios = require('axios');
+const MountainClient = require('@mountainclient-js').MountainClient;
 
 class RecordingSummaryView extends Component {
     constructor(props) {
@@ -40,7 +40,11 @@ class RecordingSummaryView extends Component {
 
     async loadParams() {
         this.setState({params: null});
-        let params = await loadObject(this.props.paramsPath);
+
+        let mt = new MountainClient();
+        mt.configDownloadFrom(['spikeforest.public']);
+
+        let params = await mt.loadObject(this.props.paramsPath);
         this.setState({ params });
     }
 
@@ -79,7 +83,10 @@ export default class RecordingSummaryViewPlugin {
 };
 
 async function load_geom_csv(path) {
-    let txt = await loadText(path, {});
+    let mt = new MountainClient();
+    mt.configDownloadFrom(['spikeforest.public']);
+
+    let txt = await mt.loadText(path, {});
     if (!txt) return null;
     let locations = [];
     var list = txt.split('\n');
@@ -96,42 +103,42 @@ async function load_geom_csv(path) {
     return locations;
 }
 
-async function loadText(path, opts) {
-    let response;
-    try {
-        response = await axios.get(`/api/loadText?path=${encodeURIComponent(path)}`);
-    }
-    catch (err) {
-        console.error(err);
-        return null;
-    }
-    let rr = response.data;
-    if (rr.success) {
-        return rr.text;
-    }
-    else return null;
-}
+// async function loadText(path, opts) {
+//     let response;
+//     try {
+//         response = await axios.get(`/api/loadText?path=${encodeURIComponent(path)}`);
+//     }
+//     catch (err) {
+//         console.error(err);
+//         return null;
+//     }
+//     let rr = response.data;
+//     if (rr.success) {
+//         return rr.text;
+//     }
+//     else return null;
+// }
 
-async function loadObject(path, opts) {
-    opts = opts || {};
-    if (!path) {
-        if ((opts.key) && (opts.collection)) {
-            path = `key://pairio/${opts.collection}/~${hash_of_key(opts.key)}`;
-        }
-    }
-    let response;
-    try {
-        response = await axios.get(`/api/loadObject?path=${encodeURIComponent(path)}`);
-    }
-    catch (err) {
-        console.error(err);
-        console.error(`Problem loading object: ${path}`);
-        return null;
-    }
-    let rr = response.data;
-    if (rr.success) {
-        return rr.object;
-    }
-    else return null;
-}
+// async function loadObject(path, opts) {
+//     opts = opts || {};
+//     if (!path) {
+//         if ((opts.key) && (opts.collection)) {
+//             path = `key://pairio/${opts.collection}/~${hash_of_key(opts.key)}`;
+//         }
+//     }
+//     let response;
+//     try {
+//         response = await axios.get(`/api/loadObject?path=${encodeURIComponent(path)}`);
+//     }
+//     catch (err) {
+//         console.error(err);
+//         console.error(`Problem loading object: ${path}`);
+//         return null;
+//     }
+//     let rr = response.data;
+//     if (rr.success) {
+//         return rr.object;
+//     }
+//     else return null;
+// }
 

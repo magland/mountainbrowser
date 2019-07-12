@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-const axios = require("axios");
+const MountainClient = require('@mountainclient-js').MountainClient;
 import Highlight from "react-highlight.js";
 
 export default class FileContentView extends Component {
@@ -14,7 +14,6 @@ export default class FileContentView extends Component {
     }
 
     async componentDidMount() {
-        console.log('--- mount');
         this.setState({ showContent: this.props.showContent });
         if (this.state.showContent) {
             await this.updateContent();
@@ -22,7 +21,6 @@ export default class FileContentView extends Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
-        console.log('--- update');
         if ((prevProps.path !== this.props.path) || (prevProps.size !== this.props.size) || (prevState.showContent != this.state.showContent)) {
             if (this.state.showContent) {
                 await this.updateContent();
@@ -48,7 +46,9 @@ export default class FileContentView extends Component {
             this.setState({
                 fileContentStatus: 'loading'
             });
-            let txt0 = await loadText(path);
+            let mt = new MountainClient();
+            mt.configDownloadFrom(['spikeforest.public']);
+            let txt0 = await mt.loadText(path);
             if (txt0) {
                 this.setState({
                     fileContentStatus: 'loaded',
@@ -117,18 +117,18 @@ function determineLanguageFromFilePath(path) {
     return '';
 }
 
-async function loadText(path, opts) {
-    let response;
-    try {
-        response = await axios.get(`/api/loadText?path=${encodeURIComponent(path)}`);
-    }
-    catch (err) {
-        console.error(err);
-        return null;
-    }
-    let rr = response.data;
-    if (rr.success) {
-        return rr.text;
-    }
-    else return null;
-}
+// async function loadText(path, opts) {
+//     let response;
+//     try {
+//         response = await axios.get(`/api/loadText?path=${encodeURIComponent(path)}`);
+//     }
+//     catch (err) {
+//         console.error(err);
+//         return null;
+//     }
+//     let rr = response.data;
+//     if (rr.success) {
+//         return rr.text;
+//     }
+//     else return null;
+// }

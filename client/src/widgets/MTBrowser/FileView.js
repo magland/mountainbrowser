@@ -54,38 +54,46 @@ export default class FileView extends Component {
                 path0 = <a href="#" onClick={() => { this.props.onOpenPath && this.props.onOpenPath(node.path) }}>{node.path}</a>;
             }
             table = <table className="table">
-                <tr>
-                    <td>Path</td>
-                    <td>{path0}</td>
-                </tr>
-                <tr>
-                    <td>Size</td>
-                    <td>{(node.file || {}).size}</td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Path</td>
+                        <td>{path0}</td>
+                    </tr>
+                    <tr>
+                        <td>Size</td>
+                        <td>{(node.file || {}).size}</td>
+                    </tr>
+                </tbody>
             </table>;
         }
         else if (node.type === 'dir') {
             table = <table className="table">
-                <tr>
-                    <td>Path</td>
-                    <td><a href="#" onClick={() => { this.props.onOpenPath && this.props.onOpenPath(node.path) }}>{node.path}</a></td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Path</td>
+                        <td><a href="#" onClick={() => { this.props.onOpenPath && this.props.onOpenPath(node.path) }}>{node.path}</a></td>
+                    </tr>
+                </tbody>
             </table>;
         }
         else if (node.type === 'object') {
             table = <table className="table">
-                <tr>
-                    <td>Path</td>
-                    <td>{node.path}</td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Path</td>
+                        <td>{node.path}</td>
+                    </tr>
+                </tbody>
             </table>;
         }
         else if (node.type === 'array-parent') {
             table = <table className="table">
-                <tr>
-                    <td>Path</td>
-                    <td>{node.path}</td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Path</td>
+                        <td>{node.path}</td>
+                    </tr>
+                </tbody>
             </table>;
         }
         else if (node.type === 'value') {
@@ -94,14 +102,16 @@ export default class FileView extends Component {
                 val0 = <a href="#" onClick={() => { this.props.onOpenPath && this.props.onOpenPath(node.value) }}>{node.value}</a>
             }
             table = <table className="table">
-                <tr>
-                    <td>Path</td>
-                    <td>{node.path}</td>
-                </tr>
-                <tr>
-                    <td>Value</td>
-                    <td>{val0}</td>
-                </tr>
+                <tbody>
+                    <tr>
+                        <td>Path</td>
+                        <td>{node.path}</td>
+                    </tr>
+                    <tr>
+                        <td>Value</td>
+                        <td>{val0}</td>
+                    </tr>
+                </tbody>
             </table>;
         }
         else {
@@ -114,8 +124,8 @@ export default class FileView extends Component {
                     {table}
 
                 </Row>
-                {viewPluginElements.map((elmt) => (
-                    <Row>
+                {viewPluginElements.map((elmt, ii) => (
+                    <Row key={`elmt-${ii}`}>
                         {elmt}
                     </Row>
                 ))}

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { ElectrodeGeometryWidget } from "@spikeforestwidgets-js";
 
-const axios = require('axios');
+const MountainClient = require('@mountainclient-js').MountainClient;
 
 class ElectrodeGeometryView extends Component {
     constructor(props) {
@@ -53,7 +53,10 @@ export default class ElectrodeGeometryViewPlugin {
 };
 
 async function load_geom_csv(path) {
-    let txt = await loadText(path, {});
+    let mt = new MountainClient();
+    mt.configDownloadFrom(['spikeforest.public']);
+    
+    let txt = await mt.loadText(path, {});
     if (!txt) return null;
     let locations = [];
     let labels = [];
@@ -75,21 +78,21 @@ async function load_geom_csv(path) {
     };
 }
 
-async function loadText(path, opts) {
-    let response;
-    try {
-        response = await axios.get(`/api/loadText?path=${encodeURIComponent(path)}`);
-    }
-    catch (err) {
-        console.error(err);
-        return null;
-    }
-    let rr = response.data;
-    if (rr.success) {
-        return rr.text;
-    }
-    else return null;
-}
+// async function loadText(path, opts) {
+//     let response;
+//     try {
+//         response = await axios.get(`/api/loadText?path=${encodeURIComponent(path)}`);
+//     }
+//     catch (err) {
+//         console.error(err);
+//         return null;
+//     }
+//     let rr = response.data;
+//     if (rr.success) {
+//         return rr.text;
+//     }
+//     else return null;
+// }
 
 function baseName(str) {
     var base = new String(str).substring(str.lastIndexOf('/') + 1);

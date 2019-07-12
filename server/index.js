@@ -1,11 +1,7 @@
 const express = require('express');
 const path = require('path');
 
-const MountainClient = require('./mountainclient-js').MountainClient;
-
-const reload = require('reload');
-const watch = require('watch');
-
+const MountainClient = require('@mountainclient-js').MountainClient;
 
 let mt = new MountainClient();
 mt.configDownloadFrom(['spikeforest.public']);
@@ -68,22 +64,6 @@ app.get("/api/findFile", async (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + '/../client/dist/index.html'));
 });
-
-reload(app).then((reloadReturned) => {
-    console.log('reloadReturned...');
-    watch.watchTree(__dirname + "/../client/dist", {interval: 2}, function (f, curr, prev) {
-        console.info('Triggering reload');
-        // Fire server-side reload event
-        reloadReturned.reload();
-    });
-});
-watch.watchTree(__dirname + "/../client/public", {interval: 2}, function (f, curr, prev) {
-    console.info('copying index.html');
-    require('fs').copyFileSync(__dirname + "/../client/public/index.html", __dirname + "/../client/dist/index.html")
-});
-// watch.watchTree(__dirname + "/../client", function (f, curr, prev) {
-//     console.info('Something changed in client/');
-// });
 
 const port = process.env.PORT || 5000;
 app.listen(port);
