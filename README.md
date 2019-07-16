@@ -10,7 +10,7 @@ First install the node modules
 yarn install
 ```
 
-The following will create distribution files in the dist/ directory.
+The following will create distribution files in the dist/ directory. It allows browsing of sha1dir:// directories and interfaces with kachery databases and other MountainTools components.
 
 ```
 yarn build
