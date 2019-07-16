@@ -47,6 +47,9 @@ module.exports = {
 	// Here we define explicitly the file types we intend to deal with
 	resolve: {
 		extensions: ['.css', '.js', '.json', '.png', '.gif', '.jpg', '.svg'],
+		alias: {
+			'react-dom': '@hot-loader/react-dom'
+		}
 	},
 	// This is where we define how everything gets output.
 	// dist is a common output folder, and it should be gitignored.
