@@ -1,28 +1,21 @@
-// Path is in Node for free and will make simple resolving of directories no
-// matter which part of your file system your library lives in
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackRootPlugin = require('html-webpack-root-plugin');
 
-// Webpack is just a bunch of keys on module.exports!
 module.exports = {
-	// This is where our app starts. This is why we have done all this importing
-	// and exporting, to get to here
+	// This is where our app starts.
 	entry: ["babel-polyfill", './src/index.js'],
-	// module (I know it's a bit weird to have module.exports.module) is where we
-	// define all the rules for how webpack will deal with thing.
+	// module is where we
+	// define all the rules for how webpack will deal with things.
 	module: {
 		// rules takes an array, each item containing the respective rules
 		rules: [
 			{
 				// First up, our JavaScript rules.
-				// If you want to use the .jsx extension, you can change this line to
-				// test: /\.jsx?$/,
-				// The ? in the regex just means "optional"
 				test: /\.js$/,
 				// Don't bother spending time transpiling your installed packages
 				exclude: /node_modules/,
-				// This is where we tell webpack to use babel to transpile our JS.
+				// Use babel to transpile our JS.
 				use: {
 					loader: 'babel-loader',
 					options: {
@@ -32,14 +25,9 @@ module.exports = {
 				}
 			},
 			{
-				// I haven't used SCSS in the base example, but it's here for you if you
-				// want! If you want to use CSS, you can change this next like's regex to
-				// /\.(css|scss)$/ or even just /\.css$/
+				// CSS files
 				test: /\.css$/,
 				use: [
-					// These three libraries are commonly used together to turn Sass into
-					// CSS, then be able to load the CSS directly with imports. From there
-					// It gets put in the DOM for you.
 					{ loader: 'style-loader' },
 					{ loader: 'css-loader' }
 				],
@@ -61,15 +49,14 @@ module.exports = {
 		extensions: ['.css', '.js', '.json', '.png', '.gif', '.jpg', '.svg'],
 	},
 	// This is where we define how everything gets output.
-	// dist is a common output folder, and it should be gitignored. The build can
-	// be run after publishing so you don't wind up with it in source control
+	// dist is a common output folder, and it should be gitignored.
 	output: {
 		path: path.resolve(__dirname, 'dist/'),
 		publicPath: '',
 		// You can do fun things here like use the [hash] keyword to generate unique
-		// filenames, but for this purpose rinse.js is fine. This file and path will
+		// filenames, but for this purpose mountainbrowser.js is fine. This file and path will
 		// be what you put in package.json's "main" field
-		filename: 'mtbrowser.js',
+		filename: 'mountainbrowser.js',
 		// This field determines how things are importable when installed from other
 		// sources. UMD may not be correct now and there is an open issue to fix this,
 		// but until then, more reading can be found here:
@@ -78,12 +65,13 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: 'index_template.html',
+			template: 'src/index_template.html',
 			title: 'MountainBrowser'
 		}),
 		new HtmlWebpackRootPlugin()
 	],
 	optimization: {
+		// Create a separate file for vendor modules
 		splitChunks: {
 			cacheGroups: {
 				commons: {
@@ -95,6 +83,7 @@ module.exports = {
 		}
 	},
 	devServer: {
-		contentBase: 'dist'
+		contentBase: 'dist',
+		port: 5050
 	}
 };

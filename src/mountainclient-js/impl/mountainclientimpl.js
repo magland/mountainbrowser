@@ -85,6 +85,15 @@ function MountainClientImpl(fs) {
     let url_or_null = await this.loadBinary(path, opts);
     return url_or_null;
   }
+  this.probeKachery = async function(name, opts) {
+    let kachery_url = await resolve_kachery_url(name);
+    if (!kachery_url) return false;
+    let url0 = kachery_url + '/probe';
+    let obj = await http_get_json(url0);
+    if (!obj) return false;
+    return (obj.success);
+
+  }
   this.fileSha1 = async function(path, opts) {
     if (path.startsWith('sha1://')) {
       let sha1 = path.split('/')[2] || '';

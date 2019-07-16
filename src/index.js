@@ -1,13 +1,14 @@
 import { MTBrowser } from "./widgets";
 import React from "react";
 import ReactDOM from "react-dom";
+import MainWindow from "./components/MainWindow";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'highlight.js/styles/railscasts.css';
 
 const show_mtbrowser = async (path) => {
     ReactDOM.render(
-        <MTBrowser path={path}></MTBrowser>,
+        <MainWindow path={path}></MainWindow>,
         document.getElementById("root")
     );
 };

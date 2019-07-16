@@ -3,23 +3,45 @@ import { ElectrodeGeometryWidget } from "@spikeforestwidgets-js";
 
 const MountainClient = require('@mountainclient-js').MountainClient;
 
-class ElectrodeGeometryView extends Component {
+export class ElectrodeGeometryView extends Component {
     constructor(props) {
         super(props);
         this.state = {
             locations: null,
-            labels: null
+            labels: null,
+            width: null
         };
     }
 
     async componentDidMount() {
+        this.updateDimensions();
+        window.addEventListener("resize", this.resetWidth);
         await this.loadGeom();
     }
 
-    async componentDidUpdate(prevProps) {
-        if ((prevProps.path !== this.props.path )) {
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.resetWidth);
+    }
+
+    resetWidth = () => {
+        this.setState({
+            width: null
+        });
+    }
+
+    async componentDidUpdate(prevProps, prevState) {
+        if (!this.state.width) {
+            this.updateDimensions();
+        }
+        if ((prevProps.path !== this.props.path)) {
             await this.loadGeom();
         }
+    }
+
+    updateDimensions() {
+        this.setState({
+            width: this.container.offsetWidth // see render()
+        });
     }
 
     async loadGeom() {
@@ -27,27 +49,40 @@ class ElectrodeGeometryView extends Component {
         this.setState({ locations, labels })
     }
 
-    render() {
+    renderContent() {
         if (!this.state.locations) {
             return <div></div>;
         }
         return <div><ElectrodeGeometryWidget
             locations={this.state.locations}
             labels={this.state.labels}
+            width={this.state.width}
+            height={null}
         /></div>;
+    }
+
+    render() {
+        const { width } = this.state;
+
+        return (
+            <div className="determiningWidth" ref={el => (this.container = el)}>
+                {width && this.renderContent()}
+            </div>
+        );
     }
 }
 
 export default class ElectrodeGeometryViewPlugin {
-    static getViewElementsForFile(path, opts) {
+    static getViewComponentsForFile(path, opts) {
         if (baseName(path) === 'geom.csv') {
-            return [<ElectrodeGeometryView
-                path={path}
-            />];
+            return [{
+                component: <ElectrodeGeometryView path={path} />,
+                size: 'large'
+            }];
         }
         return [];
     }
-    static getViewElementsForDir(dir, opts) {
+    static getViewComponentsForDir(dir, opts) {
         return [];
     }
 };

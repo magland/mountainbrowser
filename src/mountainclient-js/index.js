@@ -42,4 +42,8 @@ function MountainClient(opts) {
     opts=opts||{};
     return await impl.findFile(path, opts);
   }
+  this.probeKachery = async function(name, opts) {
+    opts=opts||{};
+    return await impl.probeKachery(name, opts);
+  }
 }

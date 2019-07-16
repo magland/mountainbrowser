@@ -24,8 +24,8 @@ class KacheryStatusIndicator extends Component {
             connected: 'lightgreen',
             disconnected: 'darkred'
         };
-        const color = color_for_status[kc.status] || 'gray';
-        return <IconButton size="small" style={{color: color}} title={`kachery: ${kc.name} (${kc.status})`}>
+        const color = color_for_status[kc.connectionStatus] || 'gray';
+        return <IconButton size="small" style={{color: color}} title={`kachery: ${kc.name} (${kc.connectionStatus})`}>
                 <FaCircle />
             </IconButton>;
     }
@@ -56,11 +56,9 @@ export default class InfoBar extends Component {
     }
 
     handleKacheryCogClick = () => {
-        console.log('click');
     }
 
     handleTitleClick = () => {
-        console.log('click2');
     }
 
     render() {
@@ -80,7 +78,7 @@ export default class InfoBar extends Component {
                 {/* </Button> */}
                 <div style={{ width: '50px' }} />
                 <KacheryCogButton onClick={this.handleKacheryCogClick} />
-                {this.props.kacheryConnections.map((kc) => (
+                {this.props.kacheryManager.map((kc) => (
                     <KacheryStatusIndicator kacheryConnection={kc} key={kc.name} />
                 ))}
             </Toolbar>

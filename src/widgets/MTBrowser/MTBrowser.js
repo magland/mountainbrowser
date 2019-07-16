@@ -239,15 +239,12 @@ class MTBrowser extends Component {
         }
         this.setState({
             path: path,
-
             inputPath: path,
             pathHistory: [...this.state.pathHistory, this.state.path]
         });
 
         var q = queryString.parse(location.search);
         q.path = path;
-        console.log('-----', queryString.stringify(q));
-        //location.search = queryString.stringify(q);
     }
 
     handleUpdate = () => {
@@ -336,7 +333,7 @@ class MTBrowser extends Component {
             </Col>
         </Row>
 
-        const kacheryConnections = [
+        const KacheryManager = [
             { name: 'test0', status: '' },
             { name: 'test1', status: 'disconnected' },
             { name: 'test2', status: 'connected' }
@@ -344,7 +341,7 @@ class MTBrowser extends Component {
 
         return <React.Fragment>
             <div>
-                <InfoBar kacheryConnections={kacheryConnections} />
+                <InfoBar KacheryManager={KacheryManager} />
             </div>
             {/* Important to put in this toolbar in order to shift down the stuff below */}
             <Toolbar variant="dense" />
