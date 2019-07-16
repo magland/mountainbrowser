@@ -16,7 +16,11 @@ The following will create distribution files in the dist/ directory. It allows b
 yarn build
 ```
 
-You can then open dist/index.html in a browser.
+You can then either open dist/index.html in a browser, or run a server on port 6060 via:
+
+```
+PORT=6060 yarn start
+```
 
 ## Development installation
 

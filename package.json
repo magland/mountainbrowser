@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "echo \"starting development serrver\" && webpack-dev-server --hot",
     "build": "echo \"building bundle\" && NODE_OPTIONS=--max_old_space_size=4096 webpack --devtool source-map",
+    "start": "echo \"starting server\" && node server/index.js",
     "preinstall": "which link-module-alias && link-module-alias clean || echo",
     "postinstall": "link-module-alias"
   },
@@ -21,6 +22,7 @@
     "@material-ui/styles": "^4.2.0",
     "axios": "^0.19.0",
     "bootstrap": "^4.3.1",
+    "express": "^4.17.1",
     "highlight.js": "^9.15.8",
     "plotly.js": "^1.48.3",
     "query-string": "^6.8.1",
