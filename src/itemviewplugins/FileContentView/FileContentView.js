@@ -46,9 +46,7 @@ export default class FileContentView extends Component {
             this.setState({
                 fileContentStatus: 'loading'
             });
-            let mt = new MountainClient();
-            mt.configDownloadFrom(['spikeforest.public']);
-            let txt0 = await mt.loadText(path);
+            let txt0 = await this.props.kacheryManager.loadText(path);
             if (txt0) {
                 this.setState({
                     fileContentStatus: 'loaded',

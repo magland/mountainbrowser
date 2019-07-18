@@ -1,4 +1,3 @@
-import { MTBrowser } from "./widgets";
 import React from "react";
 import ReactDOM from "react-dom";
 import MainWindow from "./components/MainWindow";

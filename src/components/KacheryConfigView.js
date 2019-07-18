@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Paper, Table, TableBody, TableHead, TableRow, TableCell, Toolbar, Button, Input } from '@material-ui/core';
-import { MdAdd } from 'react-icons/md';
+import { Paper, Table, TableBody, TableHead, TableRow, TableCell, Toolbar, Button, Input, Checkbox, IconButton } from '@material-ui/core';
+import { MdAdd, MdClose } from 'react-icons/md';
 
 
 const KacheryName = (props) => {
@@ -37,10 +37,31 @@ const CheckButton = (props) => {
     </Button>
 }
 
+const KacheryEnabledCheckbox = (props) => {
+    return <Checkbox
+        checked={props.kacheryInfo.enabled}
+        onChange={(evt, val) => props.onEnabledChanged(val)}
+    />;
+}
+
+const KacheryActions = (props) => {
+    const { kacheryName } = props.kacheryInfo;
+    let title0 = `Remove connection to ${props.kacheryName}`;
+    return <React.Fragment>
+        <IconButton
+            onClick={() => props.onRemoveKachery(kacheryName)}
+        >
+            <MdClose title={title0} />
+        </IconButton>
+    </React.Fragment>
+}
+
 
 const KacheryConnectionRow = (props) => {
     return (
         <TableRow>
+            <TableCell><KacheryActions {...props} ></KacheryActions></TableCell>
+            <TableCell><KacheryEnabledCheckbox {...props} ></KacheryEnabledCheckbox></TableCell>
             <TableCell><KacheryName {...props}></KacheryName></TableCell>
             <TableCell><ConnectionStatus {...props}></ConnectionStatus></TableCell>
             <TableCell><CheckButton {...props}></CheckButton></TableCell>
@@ -62,11 +83,18 @@ class ConfigView extends Component {
         clearInterval(this.timer);
         this.timer = null;
     }
+    setKacheryEnabled(kacheryName, val) {
+        const { kacheryManager } = this.props;
+        kacheryManager.setConnectionEnabled(kacheryName, val);
+        this.updateKacheryInfos();
+    }
     renderKacheryTable() {
         return (
             <Table>
                 <TableHead>
                     <TableRow>
+                        <TableCell></TableCell>
+                        <TableCell>Enabled</TableCell>
                         <TableCell>Kachery name</TableCell>
                         <TableCell>Connection status</TableCell>
                         <TableCell>Check connection</TableCell>
@@ -75,7 +103,16 @@ class ConfigView extends Component {
                 <TableBody>
                     {
                         this.state.kacheryInfos.map((kci, ii) => (
-                            <KacheryConnectionRow key={ii} onCheckConnection={this.handleCheckConnection} kacheryInfo={kci} />
+                            <KacheryConnectionRow
+                                key={ii}
+                                onCheckConnection={this.handleCheckConnection}
+                                kacheryInfo={kci}
+                                enabled={kci.enabled}
+                                onEnabledChanged={(val) => {
+                                    this.setKacheryEnabled(kci.kacheryName, val);
+                                }}
+                                onRemoveKachery={this.handleRemoveKachery}
+                            />
                         ))
                     }
                 </TableBody>
@@ -104,12 +141,17 @@ class ConfigView extends Component {
             this.setState({ addingKachery: false });
         }
     }
+    handleRemoveKachery = (kacheryName) => {
+        const { kacheryManager } = this.props;
+        kacheryManager.removeConnection(kacheryName);
+    }
     updateKacheryInfos = () => {
         const { kacheryManager } = this.props;
         let kacheryInfos = kacheryManager.allConnections().map((kc) => (
             {
                 kacheryName: kc.kacheryName,
-                connectionStatus: kc.connectionStatus
+                connectionStatus: kc.connectionStatus,
+                enabled: kc.enabled
             }
         ));
         this.setState({

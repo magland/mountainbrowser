@@ -30,7 +30,12 @@ class ElectrodeGeometryView extends Component {
     }
 
     async loadGeom() {
-        let { locations, labels } = await load_geom_csv(this.props.path);
+        let txt0 = await this.kacheryManager.loadText(this.props.path);
+        let locations = load_geom_csv(txt0);
+        let labels = [];
+        for (let i in locations) {
+            labels.push(Number(i) + 1);
+        }
         this.setState({ locations, labels })
     }
 
@@ -60,6 +65,7 @@ export default class ElectrodeGeometryViewPlugin {
         if (baseName(path) === 'geom.csv') {
             return [<ElectrodeGeometryView
                 path={path}
+                kacheryManager={opts.kacheryManager}
             />];
         }
         return [];
@@ -69,14 +75,9 @@ export default class ElectrodeGeometryViewPlugin {
     }
 };
 
-async function load_geom_csv(path) {
-    let mt = new MountainClient();
-    mt.configDownloadFrom(['spikeforest.public']);
-
-    let txt = await mt.loadText(path, {});
+function load_geom_csv(txt) {
     if (!txt) return null;
     let locations = [];
-    let labels = [];
     var list = txt.split('\n');
     for (var i in list) {
         if (list[i].trim()) {
@@ -86,13 +87,9 @@ async function load_geom_csv(path) {
             }
             while (vals.length < 2) vals.push(0);
             locations.push(vals);
-            labels.push(Number(i) + 1);
         }
     }
-    return {
-        locations,
-        labels
-    };
+    return locations;
 }
 
 // async function loadText(path, opts) {

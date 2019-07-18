@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { TableRow, Table, TableHead, TableCell, Paper, TableBody, Button } from '@material-ui/core';
 
 const PairioUrl = (props) => {
@@ -65,7 +65,7 @@ class PairioConfigView extends Component {
         });
     }
     handleCheckConnection() {
-        console.log('todo');
+        console.info('todo');
     }
     renderPairioTable() {
         return (
@@ -86,10 +86,12 @@ class PairioConfigView extends Component {
     }
     render() {
         return (
+            <React.Fragment>
             <Paper>
                 <h3>Pairio configuration</h3>
                 {this.renderPairioTable()}
             </Paper>
+            </React.Fragment>
         );
     }
 }

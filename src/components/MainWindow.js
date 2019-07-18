@@ -22,12 +22,14 @@ const MainContainer = (props) => {
                         onItemSelected={props.onItemSelected}
                         pathHistory={props.pathHistory}
                         onGotoHistory={props.onGotoHistory}
+                        kacheryManager={props.kacheryManager}
                     />
                 </Grid>
                 <Grid item xs={12} md={6} lg={7} xl={7}>
                     <ItemView
                         item={props.currentItem}
                         viewPlugins={Object.values(itemViewPlugins)}
+                        kacheryManager={props.kacheryManager}
                         onOpenPath={props.onOpenPath}
                     />
                 </Grid>
@@ -51,8 +53,8 @@ class MainWindow extends Component {
         };
 
         this.kacheryManager = new KacheryManager;
-        this.kacheryManager.addConnection('spikeforest.public');
-        this.kacheryManager.addConnection('spikeforest.public_xxx');
+        this.kacheryManager.setLocalStorageConfigKey('kachery_manager');
+        this.kacheryManager.addSystemConnection('spikeforest.public', {enabledByDefault: true});
     }
 
     async componentDidMount() {
@@ -63,6 +65,7 @@ class MainWindow extends Component {
 
     startIterating = async () => {
         await this.kacheryManager.checkWaitingConnections();
+        this.kacheryManager.saveConfigToLocalStorage();
         setTimeout(this.startIterating, 5000);
     }
 
@@ -129,6 +132,7 @@ class MainWindow extends Component {
                 onOpenPath={this.handlePathChanged}
                 pathHistory={this.state.pathHistory}
                 onGotoHistory={this.handleGotoHistory}
+                kacheryManager={this.kacheryManager}
             />
         );
         const configView = (
@@ -141,7 +145,9 @@ class MainWindow extends Component {
                         {appBar}
                         {appBarSpacer}
                         {pathBar}
-                        {mainContainer}
+                        <div style={{ padding: 20 }}>
+                            {mainContainer}
+                        </div>
                     </React.Fragment>
                 );
             case PAGE_CONFIG:
@@ -149,9 +155,9 @@ class MainWindow extends Component {
                     <React.Fragment>
                         {appBar}
                         {appBarSpacer}
-                        {configView}
-                        {/* <PathBar />
-                        <MainContainer /> */}
+                        <div style={{ padding: 20 }}>
+                            {configView}
+                        </div>
                     </React.Fragment>
                 );
         }

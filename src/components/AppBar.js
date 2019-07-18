@@ -52,7 +52,9 @@ class AppBar extends Component {
 
     updateKacheryInfos = () => {
         const { kacheryManager } = this.props;
-        let kacheryInfos = kacheryManager.allConnections().map((kc) => (
+        let kacheryInfos = kacheryManager.allConnections().filter((kc) => (
+            kc.enabled === true
+        )).map((kc) => (
             {
                 kacheryName: kc.kacheryName,
                 connectionStatus: kc.connectionStatus

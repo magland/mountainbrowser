@@ -100,7 +100,7 @@ class ItemView extends Component {
     }
 
     updatePluginComponents() {
-        let { item, viewPlugins } = this.props;
+        let { item, viewPlugins, kacheryManager } = this.props;
         if (!item) return;
         if (!viewPlugins) return;
         let components = [];
@@ -108,13 +108,13 @@ class ItemView extends Component {
             for (let plugin of viewPlugins) {
                 if (item.type === 'file') {
                     if (plugin.getViewComponentsForFile) {
-                        let components0 = plugin.getViewComponentsForFile(`sha1://${item.data.file.sha1}/${item.name}`, { size: item.data.file.size });
+                        let components0 = plugin.getViewComponentsForFile(`sha1://${item.data.file.sha1}/${item.name}`, { size: item.data.file.size, kacheryManager });
                         components.push(...components0);
                     }
                 }
                 else if (item.type === 'dir') {
                     if (plugin.getViewComponentsForDir) {
-                        let components0 = plugin.getViewComponentsForDir(item.data.dir, { path: item.path });
+                        let components0 = plugin.getViewComponentsForDir(item.data.dir, { path: item.path, kacheryManager: kacheryManager });
                         components.push(...components0);
                     }
                 }

@@ -29,7 +29,8 @@ class RecordingSummaryView extends Component {
 
     async loadGeom() {
         this.setState({ locations: null, labels: null });
-        let locations = await load_geom_csv(this.props.geomPath);
+        let geomTxt = await this.props.kacheryManager.loadText(this.props.geomPath);
+        let locations = load_geom_csv(geomTxt);
         if (!locations) return { locations: null, labels: null };
         let labels = [];
         for (let i in locations) {
@@ -41,11 +42,8 @@ class RecordingSummaryView extends Component {
     async loadParams() {
         this.setState({ params: null });
 
-        let mt = new MountainClient();
-        mt.configDownloadFrom(['spikeforest.public']);
-
-        let params = await mt.loadObject(this.props.paramsPath);
-        this.setState({ params });
+        let params = await(this.props.kacheryManager.loadObject(this.props.paramsPath));
+        this.setState({ params: params });
     }
 
     render() {
@@ -61,6 +59,7 @@ class RecordingSummaryView extends Component {
             </table>
             <ElectrodeGeometryView
                 path={this.props.geomPath}
+                kacheryManager={this.props.kacheryManager}
             />
         </div>;
     }
@@ -76,6 +75,7 @@ export default class RecordingSummaryViewPlugin {
                 component: <RecordingSummaryView
                     geomPath={`sha1://${dir.files['geom.csv'].sha1}/geom.csv`}
                     paramsPath={`sha1://${dir.files['params.json'].sha1}/params.json`}
+                    kacheryManager={opts.kacheryManager}
                 />,
                 size: 'large'
             }];
@@ -84,12 +84,7 @@ export default class RecordingSummaryViewPlugin {
     }
 };
 
-async function load_geom_csv(path) {
-    let mt = new MountainClient();
-    mt.configDownloadFrom(['spikeforest.public']);
-
-    let txt = await mt.loadText(path, {});
-    if (!txt) return null;
+function load_geom_csv(txt) {
     let locations = [];
     var list = txt.split('\n');
     for (var i in list) {
@@ -102,7 +97,7 @@ async function load_geom_csv(path) {
             locations.push(vals);
         }
     }
-    return locations;
+    return locations
 }
 
 // async function loadText(path, opts) {

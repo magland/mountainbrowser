@@ -129,7 +129,8 @@ class UnitWaveformsView extends Component {
     }
 
     async loadAverageWaveform() {
-        let averageWaveform = await load_average_waveform(this.props.averageWaveformPath);
+        let obj = await this.props.kacheryManager.loadObject(this.props.averageWaveformPath);
+        let averageWaveform = obj['waveform'] || null;
         this.setState({ averageWaveform })
     }
 
@@ -150,6 +151,7 @@ export default class UnitWaveformsViewPlugin {
                 component: <UnitWaveformsView
                     averageWaveformPath={path}
                     key={path}
+                    kacheryManager={opts.kacheryManager}
                 />,
                 size: 'small'
             }];
@@ -160,15 +162,6 @@ export default class UnitWaveformsViewPlugin {
         return [];
     }
 };
-
-async function load_average_waveform(path) {
-    let mt = new MountainClient();
-    mt.configDownloadFrom(['spikeforest.public']);
-
-    let obj = await mt.loadObject(path, {});
-    if (!obj) return null;
-    return obj['waveform'] || null;
-}
 
 // async function loadObject(path, opts) {
 //     if (!path) {

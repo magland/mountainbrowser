@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Tree from './Tree.js';
-const MountainClient = require('@mountainclient-js').MountainClient;
 import styled from 'styled-components'
 
 const STATUS_WAITING = 'waiting';
@@ -142,47 +141,12 @@ class NodeCreator {
     }
 }
 
-class RemoteLoader {
-    async loadDirectory(path) {
-        let mt = new MountainClient();
-        mt.configDownloadFrom(['spikeforest.public']);
-    
-        let X;
-        if (path.startsWith('key://')) {
-            path = await mt.resolveKeyPath(path);
-            if (!path) return null;
-        }
-        if (path.startsWith('sha1dir://')) {
-            let vals = path.split('/');
-            vals[2] = vals[2].split('.')[0];
-            X = await mt.loadObject(`sha1://${vals[2]}`);
-            if (!X) return null;
-            for (let i = 3; i < vals.length; i++) {
-                if (vals[i]) {
-                    if ((X.dirs) && (vals[i] in X.dirs)) {
-                        X = X.dirs[vals[i]];
-                    }
-                    else {
-                        return null;
-                    }
-                }
-            }
-        }
-        else {
-            return null;
-        }
-    
-        return X;
-    }
-}
-
 class BrowserTree extends Component {
     state = {
         status: STATUS_WAITING,
         rootNode: null
     };
     nodeCreator = new NodeCreator();
-    remoteLoader = new RemoteLoader();
 
 
     async componentDidMount() {
@@ -196,13 +160,11 @@ class BrowserTree extends Component {
     }
 
     async updateContent() {
-        const { path } = this.props;
+        const { path, kacheryManager } = this.props;
         this.setState({ status: STATUS_LOADING });
         let rootNode = null;
         if (path.endsWith('.json')) {
-            let mt = new MountainClient();
-            mt.configDownloadFrom(['spikeforest.public']);
-            let A = await mt.loadObject(path, {});
+            let A = await kacheryManager.loadObject(path, {});
             if (!A) {
                 this.setState({
                     status: STATUS_FAILED_TO_LOAD
@@ -212,7 +174,7 @@ class BrowserTree extends Component {
             rootNode = this.nodeCreator.createObjectNode(A, '');
         }
         else {
-            let X = await this.remoteLoader.loadDirectory(path, {});
+            let X = await kacheryManager.loadDirectory(path, {});
             if (!X) {
                 this.setState({
                     status: STATUS_FAILED_TO_LOAD
