@@ -1,25 +1,18 @@
-const {app, BrowserWindow} = require('electron');
-const serve = require('electron-serve');
-
-//const loadURL = serve({directory: __dirname + '/../../dist'});
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
 
 let mainWindow;
 
 (async () => {
-	await app.whenReady();
+    await app.whenReady();
 
-	mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: false,
             preload: __dirname + '/preload.js'
         }
     });
 
-	// await loadURL(mainWindow);
-
-	// // The above is equivalent to this:
-	await mainWindow.loadURL('http://localhost:5050');
-    // // The `-` is just the required hostname
-    
-    // mainWindow.webContents.openDevTools()
+    // await mainWindow.loadURL(`file://${__dirname}/../../dist/index.html`);
+    await mainWindow.loadURL('http://localhost:5050');
 })();

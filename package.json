@@ -9,7 +9,7 @@
     "chrome": "echo \"Opening as app in chrome. This should be used with yarn dev.\" && google-chrome --app=http://localhost:5050",
     "build": "echo \"building bundle\" && NODE_OPTIONS=--max_old_space_size=4096 webpack --devtool source-map",
     "start": "echo \"starting server\" && node server/index.js",
-    "electron-dev": "concurrently --kill-others \"yarn dev\" \"sleep 2 && cd electron && yarn dev\"",
+    "electron-dev": "concurrently --kill-others \"yarn dev\" \"sleep 2 && cd electron && yarn start\"",
     "preinstall": "which link-module-alias && link-module-alias clean || echo",
     "postinstall": "link-module-alias"
   },
@@ -34,6 +34,7 @@
     "react-highlight.js": "^1.0.7",
     "react-hot-loader": "^4.12.6",
     "react-icons": "^3.7.0",
+    "react-markdown": "^4.1.0",
     "react-plotly.js": "^2.3.0",
     "styled-components": "^4.3.2",
     "text-encoding": "^0.7.0"

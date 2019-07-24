@@ -158,7 +158,7 @@ export default class UnitWaveformsViewPlugin {
         }
         return [];
     }
-    static getViewComponentsForDir(dir, opts) {
+    static getViewComponentsForDir(path, dir, opts) {
         return [];
     }
 };

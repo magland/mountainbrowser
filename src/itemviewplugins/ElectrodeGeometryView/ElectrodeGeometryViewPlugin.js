@@ -87,7 +87,7 @@ export default class ElectrodeGeometryViewPlugin {
         }
         return [];
     }
-    static getViewComponentsForDir(dir, opts) {
+    static getViewComponentsForDir(path, dir, opts) {
         return [];
     }
 };
