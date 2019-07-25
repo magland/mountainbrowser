@@ -38,10 +38,10 @@ class ElectricalSeriesView extends Component {
                             <TableCell>Timestamps</TableCell>
                             <TableCell>{val2elmt(datasets.timestamps._data)}</TableCell>
                         </TableRow>
-                        <TableRow key="electrodes">
+                        {/* <TableRow key="electrodes">
                             <TableCell>Electrodes</TableCell>
                             <TableCell>{val2elmt(datasets.electrodes._data)}</TableCell>
-                        </TableRow>
+                        </TableRow> */}
                     </TableBody>
                 </Table>
             );
@@ -65,8 +65,29 @@ function getNeurodataType(obj) {
     return null;
 }
 
+function findElectricalSeries(obj, name) {
+    if (typeof(obj) != 'object') return null;
+    if (getNeurodataType(obj) === 'ElectricalSeries') {
+        return {
+            obj: obj,
+            name: name
+        };
+    }
+    for (let key in obj) {
+        let x = findElectricalSeries(obj[key], key);
+        if (x) return x;
+    }
+    return null;
+}
+
 export default class ElectricalSeriesPlugin {
     static getViewComponentsForObject(name, path, obj, opts) {
+        if ((name == 'LFP') || (name == 'acquisition')) {
+            let a = findElectricalSeries(obj);
+            if (!a) return [];
+            name = a.name;
+            obj = a.obj;
+        }
         if (getNeurodataType(obj) === 'ElectricalSeries') {
             return [{
                 component: <ElectricalSeriesView name={name} attrs={obj._attrs} datasets={obj._datasets || null} />,

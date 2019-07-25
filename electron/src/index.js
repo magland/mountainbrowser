@@ -14,5 +14,7 @@ let mainWindow;
     });
 
     // await mainWindow.loadURL(`file://${__dirname}/../../dist/index.html`);
-    await mainWindow.loadURL('http://localhost:5050?path=key://pairio/spikeforest/test_franklab.json');
+    let dev_path = 'key://pairio/spikeforest/test_franklab.json';
+    //let dev_path = 'sha1://c5ad0ae29162d170c751eb44be1772f70360f826/analysis.json';
+    await mainWindow.loadURL(`http://localhost:5050?path=${dev_path}`);
 })();

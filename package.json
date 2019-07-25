@@ -36,6 +36,7 @@
     "react-hot-loader": "^4.12.6",
     "react-icons": "^3.7.0",
     "react-markdown": "^4.1.0",
+    "react-plotly": "^1.0.0",
     "react-plotly.js": "^2.3.0",
     "styled-components": "^4.3.2",
     "text-encoding": "^0.7.0"

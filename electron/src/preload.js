@@ -13,6 +13,7 @@ window.electron_new_mountainclient = function() {
 }
 
 window.executeJob = async function(job, input, opts) {
+    console.log('---- execute job 1');
     opts = opts || {};
     const job_fname = create_temporary_file();
     const input_fname = create_temporary_file();

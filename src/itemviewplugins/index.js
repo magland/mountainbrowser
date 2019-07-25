@@ -9,4 +9,5 @@ export { default as StudySetPlugin } from "./spikeforestanalysis/StudySetPlugin"
 export { default as AttrViewPlugin } from "./franklab/AttrViewPlugin";
 export { default as DatsetViewPlugin } from "./franklab/DatasetViewPlugin";
 export { default as ElectricalSeriesPlugin } from "./franklab/ElectricalSeriesPlugin";
+export { default as NWBFilePlugin } from "./franklab/NWBFilePlugin";
 

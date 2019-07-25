@@ -16,8 +16,8 @@ class AttrView extends Component {
                         {
                             keys.map((key) => (
                                 <TableRow key={key}>
-                                    <TableCell>{key}</TableCell>
-                                    <TableCell>{val2elmt(attrs[key])}</TableCell>
+                                    <TableCell key="name">{key}</TableCell>
+                                    <TableCell key="value">{val2elmt(attrs[key])}</TableCell>
                                 </TableRow>
                             ))
                         }

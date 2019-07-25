@@ -3,6 +3,7 @@ import { Table, TableHead, TableBody, TableRow, TableCell, Link } from '@materia
 import { ElectrodeGeometryView } from "../ElectrodeGeometryView/ElectrodeGeometryViewPlugin";
 import ReactMarkdown from 'react-markdown';
 import val2elmt from "./val2elmt";
+import AutocorrelogramsView from "./AutocorrelogramsView";
 
 function Link2(props) {
     return (
@@ -85,6 +86,11 @@ class RecordingView extends Component {
                 <ElectrodeGeometryView
                     kacheryManager={this.props.kacheryManager}
                     path={`${object.directory}/geom.csv`}
+                />
+                <AutocorrelogramsView
+                    kacheryManager={this.props.kacheryManager}
+                    samplerate={object.sampleRateHz}
+                    firingsPath={object.directory+'/firings_true.mda'}
                 />
             </div>
         );

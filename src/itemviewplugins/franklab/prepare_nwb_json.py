@@ -9,20 +9,35 @@ import shutil
 import copy
 
 
-def main():
+def prepare_dataset(path):
     mt.configDownloadFrom('spikeforest.public')
 
-    path = 'sha1://a713cb31d505749f7a15c3ede21a5244a3f5a4d9/bon03.nwb'
     A = mt.realizeFile(path)
     if not A:
         print('Unable to realize file: {}'.format(path))
     B = h5_to_dict(A, opts=dict(upload_to='spikeforest.public'), name=None)
-    C = mt.saveObject(object=B, upload_to='spikeforest.public',
-                      basename='bon03.nwb.json')
-    mt.createSnapshot(
-        path=C, dest_path='key://pairio/spikeforest/test_franklab.json')
+    return B
+
+def main():
+    bon03 = prepare_dataset('sha1://a713cb31d505749f7a15c3ede21a5244a3f5a4d9/bon03.nwb')
+    bon04 = prepare_dataset('sha1://d09ea629553da1045490fd242ba30a1587c56a4d/bon04.nwb')
+    ger05 = prepare_dataset('sha1://56af8f8ac1032d9c725b7aa47c0f55df44e9b169/ger05.nwb')
+
+    obj = dict(
+        bon03=bon03,
+        bon04=bon04,
+        ger05=ger05
+    )
+
+    C = mt.saveObject(object = obj, upload_to='spikeforest.public', basename='franklab_examples.json')
+
+    dest_path = 'key://pairio/spikeforest/test_franklab.json'
+    mt.createSnapshot(path=C, dest_path=dest_path)
     print('--------------------------------------------------------------------------')
-    print(C)
+    print(dest_path)
+
+def getBaseName(path):
+    return path.split('/')[-1]
 
 
 class TemporaryDirectory():
@@ -58,8 +73,6 @@ def npy_dtype_to_string(dt):
 
 
 def _handle_val(val, *, opts, name):
-    if name.startswith('colnames'):
-        print('----------------------- {}'.format(name), val, type(val))
     if type(val) == str:
         return val
     elif type(val) == int:
@@ -71,13 +84,19 @@ def _handle_val(val, *, opts, name):
     elif isinstance(val, np.integer):
         return int(val)
     elif type(val) == bytes:
-        print('type is bytes', val, val.decode('utf-8'))
         return val.decode('utf-8')
     elif type(val) == np.ndarray:
-        return _handle_ndarray(val, opts=opts, name=name)
+        if ((name == 'data') or (name == 'timestamps') or (name == 'spike_times')):
+            print('Using snapshot for', name, val.shape)
+            snapshot=True
+        else:
+            snapshot=False
+        return _handle_ndarray(val, opts=opts, name=name, snapshot=snapshot)
     elif type(val) == h5py.Reference:
-        print('Unable to handle reference type')
-        return 'unhandled_ref'
+        name0 = h5py.h5r.get_name(val, opts['file'].id).decode('utf-8')
+        return 'ref:{}'.format(name0)
+        # print('Unable to handle reference type')
+        # return 'REF:{}'.format(refname)
     else:
         print('WARNING: Unhandled type: {}'.format(type(val)))
         return 'unhandled_val'
@@ -90,22 +109,24 @@ def _handle_list_or_val(val, *, opts, name):
         return _handle_val(val, opts=opts, name=name)
 
 
-def _handle_ndarray(x, *, opts, name):
+def _handle_ndarray(x, *, opts, name, snapshot=False):
     if np.issubdtype(x.dtype, np.number):
-        if (x.size <= 20):
-            list0 = [_handle_list_or_val(val, opts=opts, name=name)
-                     for val in x.tolist()]
-            return list0
-        else:
+        if snapshot:
             with TemporaryDirectory() as f:
-                fname = f + '/{}.mda'.format(name)
+                fname = '{}/{}.mda'.format(f, name)
                 mdaio.writemda(x, fname, dtype=npy_dtype_to_string(x.dtype))
                 return mt.createSnapshot(fname, upload_to=opts.get('upload_to', None))
+        else:
+            if (x.size > 10000):
+                print(name, x.shape)
+                raise Exception('Array is too large to include in file (need to use snapshot).')
+            list0 = [_handle_list_or_val(val, opts=opts, name=name)
+                        for val in x.tolist()]
+            return list0
     else:
         list0 = [_handle_list_or_val(val, opts=opts, name='{}.{}'.format(name, ind))
                  for ind, val in enumerate(x.tolist())]
         return list0
-    return 'unhandled_ndarray'
 
 
 def _handle_dataset(ds: h5py.Dataset, *, opts, name):
@@ -148,6 +169,7 @@ def _h5_to_dict(f, *, opts, name):
 
 def h5_to_dict(fname, *, opts, name):
     with h5py.File(fname, 'r') as f:
+        opts['file'] = f
         return _h5_to_dict(f, opts=opts, name=None)
 
 
