@@ -10,6 +10,8 @@ import ConfigView from './ConfigView';
 import KacheryManager from './KacheryManager';
 import { Box } from '@material-ui/core';
 
+const queryString = require('query-string');
+
 const PAGE_CONFIG = 'config';
 const PAGE_MAIN = 'main';
 
@@ -61,11 +63,13 @@ function timeout(ms) {
 class MainWindow extends Component {
     constructor(props) {
         super(props);
+        var q = queryString.parse(location.search);
         this.state = {
             currentPageName: PAGE_MAIN,
-            // path: 'key://pairio/spikeforest/gallery',
+            path: q.path || 'key://pairio/spikeforest/gallery',
             // path: 'sha1dir://07c5564b32e6d015d8eb43f15f6f4c22cb4a7760',
-            path: 'sha1://c5ad0ae29162d170c751eb44be1772f70360f826/analysis.json',
+            // path: 'sha1://c5ad0ae29162d170c751eb44be1772f70360f826/analysis.json',
+            // path: q.path || 'key://pairio/spikeforest/test_franklab.json',
             // path: 'sha1dir://07c5564b32e6d015d8eb43f15f6f4c22cb4a7760/example_recordings/synth_magland_001',
             pathHistory: [],
             currentItem: null

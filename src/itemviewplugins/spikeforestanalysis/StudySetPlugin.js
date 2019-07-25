@@ -2,20 +2,21 @@ import React, { Component } from 'react';
 import { Table, TableHead, TableBody, TableRow, TableCell, Link } from '@material-ui/core';
 import { ElectrodeGeometryView } from "../ElectrodeGeometryView/ElectrodeGeometryViewPlugin";
 import ReactMarkdown from 'react-markdown';
+import val2elmt from "./val2elmt";
+
+function Link2(props) {
+    return (
+        <Link
+            component="button" variant="body2"
+            onClick={props.onClick}
+        >
+            {props.children}
+        </Link>
+    )
+}
 
 class StudySetInfoView extends Component {
     state = {}
-    val2str(val) {
-        if (typeof (val) === 'string') {
-            return val;
-        }
-        else if ((typeof (val) === 'object') && (Array.isArray(val))) {
-            return val.map(v => (this.val2str(v))).join(', ');
-        }
-        else {
-            return JSON.stringify(val);
-        }
-    }
     render() {
         const { info } = this.props;
         let keys = Object.keys(info);
@@ -27,7 +28,7 @@ class StudySetInfoView extends Component {
                         keys.map(key => (
                             <TableRow key={key}>
                                 <TableCell>{key}</TableCell>
-                                <TableCell>{this.val2str(info[key])}</TableCell>
+                                <TableCell>{val2elmt(info[key])}</TableCell>
                             </TableRow>
                         ))
                     }
@@ -55,6 +56,7 @@ class RecordingView extends Component {
             {name: 'name', label: 'Recording'},
             {name: 'studyName', label: 'Study', onClick: this.props.onOpenStudy},
             {name: 'studySetName', label: 'Study set', onClick: this.props.onOpenStudySet},
+            {name: 'directory', label: 'Directory'},
             {name: 'sampleRateHz', label: 'Sample rate (Hz)'},
             {name: "numChannels", label: 'Num. channels'},
             {name: "durationSec", label: 'Duration (sec)'},
@@ -67,9 +69,9 @@ class RecordingView extends Component {
                     <TableBody>
                         {
                             rows.map((rr) => {
-                                let elmt = <span>{object[rr.name]}</span>;
+                                let elmt = val2elmt(object[rr.name]);
                                 if (rr.onClick)
-                                    elmt = <Link component="button" variant="body2" onClick={rr.onClick}>{elmt}</Link>;
+                                    elmt = <Link2 onClick={rr.onClick}>{elmt}</Link2>;
                                 return (
                                     <TableRow key={rr.name}>
                                         <TableCell>{rr.label}</TableCell>
@@ -106,7 +108,7 @@ class StudiesTable extends Component {
                         {
                             studies.map((study, ind) => (
                                 <TableRow key={study.name}>
-                                    <TableCell><Link component="button" variant="body2" onClick={() => {this.props.onOpenStudy(ind)}}>{study.name}</Link></TableCell>
+                                    <TableCell><Link2 onClick={() => {this.props.onOpenStudy(ind)}}>{study.name}</Link2></TableCell>
                                     <TableCell>{(study.recordings || []).length}</TableCell>
                                 </TableRow>
                             ))
@@ -165,7 +167,7 @@ class RecordingsTable extends Component {
                                         columns.map((cc) => {
                                             let elmt = <span>{recording[cc.name]}</span>;
                                             if (cc.link) {
-                                                elmt = <Link component="button" variant="body2" onClick={() => {this.props.onOpenRecording(ind)}}>{elmt}</Link>;
+                                                elmt = <Link2 onClick={() => {this.props.onOpenRecording(ind)}}>{elmt}</Link2>;
                                             }
                                             return <TableCell key={cc.name}>{elmt}</TableCell>;
                                         })
@@ -195,7 +197,7 @@ class StudyView extends Component {
                         </TableRow>
                         <TableRow>
                             <TableCell>Study set</TableCell>
-                            <TableCell><Link component="button" variant="body2" onClick={this.props.onOpenStudySet}>{object.studySetName}</Link></TableCell>
+                            <TableCell><Link2 onClick={this.props.onOpenStudySet}>{object.studySetName}</Link2></TableCell>
                         </TableRow>
                         <TableRow>
                             <TableCell>Num. recordings</TableCell>
@@ -228,7 +230,7 @@ class StudySetListView extends Component {
                     {
                         list.map((studySet, ind) => (
                             <TableRow key={ind}>
-                                <TableCell><Link component="button" variant="body2" onClick={() => this.handleStudySetClicked(ind)}>{studySet.name}</Link></TableCell>
+                                <TableCell><Link2 onClick={() => this.handleStudySetClicked(ind)}>{studySet.name}</Link2></TableCell>
                                 <TableCell>{(studySet.studies || []).length}</TableCell>
                             </TableRow>
                         ))
@@ -240,6 +242,8 @@ class StudySetListView extends Component {
 }
 
 function isRecordingObject(obj) {
+    if (typeof(obj) !== 'object')
+        return false;
     if (('name' in obj) && ('studyName' in obj) && ('directory' in obj)) {
         return true;
     }
@@ -247,6 +251,8 @@ function isRecordingObject(obj) {
 }
 
 function isStudyObject(obj) {
+    if (typeof(obj) !== 'object')
+        return false;
     if (('name' in obj) && ('recordings' in obj)) {
         if (Array.isArray(obj.recordings)) {
             for (let rec of obj.recordings) {
@@ -260,6 +266,8 @@ function isStudyObject(obj) {
 }
 
 function isStudySetObject(obj) {
+    if (typeof(obj) !== 'object')
+        return false;
     if (('name' in obj) && ('studies' in obj)) {
         if (Array.isArray(obj.studies)) {
             for (let study of obj.studies) {
@@ -274,6 +282,8 @@ function isStudySetObject(obj) {
 }
 
 function isStudySetListObject(obj) {
+    if (typeof(obj) !== 'object')
+        return false;
     if ((Array.isArray(obj)) && (obj.length > 0)) {
         for (let x of obj) {
             if (!isStudySetObject(x))

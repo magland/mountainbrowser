@@ -1,0 +1,30 @@
+{
+    "processor_name": "ProcessSpikeForestRecording",
+    "processor_version": "0.1.0",
+    "processor_class_name": "ProcessSpikeForestRecording",
+    "processor_code": "sha1://7f67b53361164d2293d96e95c0f88a89f60d4be2/object.json",
+    "label": "ProcessSpikeForestRecording (version: 0.1.0)",
+    "inputs": {
+        "recording_dir": {
+            "directory": true,
+            "path": "<placeholder>"
+        }
+    },
+    "outputs": {
+        "filtered_timeseries": {
+            "ext": ".mda"
+        }
+    },
+    "parameters": {},
+    "parameters_to_hash": {},
+    "container": null,
+    "compute_requirements": {},
+    "force_run": false,
+    "use_cache": true,
+    "skip_failing": false,
+    "skip_timed_out": false,
+    "keep_temp_files": false,
+    "environment_variables": [],
+    "additional_files_to_realize": [],
+    "timeout": null
+}
