@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
 import mlprocessors as mlpr
-from spikeforest import SFMdaRecordingExtractor, SFMdaSortingExtractor, mdaio
-from spiketoolkit.preprocessing import bandpass_filter
-from spikeextractors import RecordingExtractor
 from mountaintools import client as mt
 import numpy as np
 import os
 import json
+from mountaintools import ReactComponentPythonCompanion
 
 def compute_autocorrelogram(times, *, max_dt_tp, bin_size_tp, max_samples=None):
     num_bins_left = int(max_dt_tp / bin_size_tp)  # number of bins to the left of the origin
@@ -109,18 +107,29 @@ class ComputeAutocorrelograms(mlpr.Processor):
         with open(self.json_out, 'w') as f:
             json.dump(serialize_np(ret), f)
 
-        
-def genjob(processor: mlpr.Processor, **kwargs) -> None:
-    job = processor.createJob(
-        **kwargs
-    )
-    source_path = os.path.dirname(os.path.realpath(__file__))
-    mt.saveObject(object=job.getObject(), dest_path='{}/{}.json'.format(source_path, processor.NAME), indent=4)
+class Component(ReactComponentPythonCompanion):
+    def __init__(self):
+        super().__init__(iterate_timeout=1)
 
-if __name__ == '__main__':
-    genjob(
-        ComputeAutocorrelograms,
-        firings_path=mlpr.PLACEHOLDER,
-        samplerate=mlpr.PLACEHOLDER,
-        json_out=dict(ext='.json')
-    )
+    def updateComponent(self, prevJavaScriptState):
+        if not self.getJavaScriptState('firingsPath'):
+            return
+        if (self.getJavaScriptState('firingsPath') != prevJavaScriptState.get('firingsPath')) or (self.getJavaScriptState('samplerate') != prevJavaScriptState.get('samplerate')):
+            self.setPythonState(dict(
+                status='running'
+            ))
+            mt.configDownloadFrom(self.getJavaScriptState('downloadFrom'))
+            firings_path = self.getJavaScriptState('firingsPath')
+            samplerate = self.getJavaScriptState('samplerate')
+            result = ComputeAutocorrelograms.execute(firings_path=firings_path, samplerate=samplerate, json_out=dict(ext='.json'))
+            output = mt.loadObject(path=result.outputs['json_out'])
+            self.setPythonState(dict(
+                status='finished',
+                output=output
+            ))
+    def iterate(self):
+        pass
+
+if __name__ == "__main__":
+    A = Component()
+    A.run()

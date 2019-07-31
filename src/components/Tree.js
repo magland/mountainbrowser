@@ -23,7 +23,6 @@ export default class Tree extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        console.log('--------------- aa', this.props.selectedNodePath);
         if (this.props.selectedNodePath !== prevProps.selectedNodePath) {
             this.setState({
                 selectedNodePath: this.props.selectedNodePath
@@ -33,7 +32,6 @@ export default class Tree extends Component {
     }
 
     adjustExpandedNodePaths() {
-        console.log('adjustExpandedNodePaths', this.state.selectedNodePath);
         let { expandedNodePaths } = this.state;
         let { selectedNodePath } = this.props;
         if (selectedNodePath) {
@@ -76,7 +74,6 @@ export default class Tree extends Component {
         for (let i = 0; i < a.length - 1; i++) {
             ret.push(a.slice(0, i + 1).join('.'));
         }
-        console.log('getAllAncestorPaths,', path, ret);
         return ret;
     }
 

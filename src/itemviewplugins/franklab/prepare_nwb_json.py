@@ -33,7 +33,7 @@ def main():
 
     dest_path = 'key://pairio/spikeforest/test_franklab.json'
     mt.createSnapshot(path=C, dest_path=dest_path)
-    print('--------------------------------------------------------------------------')
+    print('===================================================================')
     print(dest_path)
 
 def getBaseName(path):

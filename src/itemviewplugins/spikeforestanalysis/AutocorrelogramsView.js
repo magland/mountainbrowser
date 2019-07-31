@@ -1,39 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Table, TableBody, TableRow, TableCell, Grid } from '@material-ui/core';
-import ComputeAutocorrelogramsJob from "./python/ComputeAutocorrelograms.json";
+import { Grid } from '@material-ui/core';
 import Plot from 'react-plotly.js';
-
-const STATUS_WAITING = 'waiting';
-const STATUS_RUNNING = 'running';
-const STATUS_ERROR = 'error';
-const STATUS_FINISHED = 'finished';
-
-async function computeAutoCorrelograms(kacheryManager, firingsPath, samplerate) {
-    let result = await window.executeJob(
-        ComputeAutocorrelogramsJob,
-        { samplerate: samplerate, firings_path: firingsPath },
-        { download_from: 'spikeforest.public' }
-    )
-    if (!result) {
-        return {
-            success: false,
-            error: 'Error executing job.'
-        };
-    }
-    let txt = await kacheryManager.loadText(result.console_out);
-    console.log(txt);
-    if (result.retcode !== 0) {
-        return {
-            success: false,
-            error: `Error running ComputeAutocorrelograms`
-        }
-    }
-    let output = await kacheryManager.loadObject(result.outputs.json_out)
-    return {
-        success: true,
-        output: output
-    };
-}
+import AutocorrelogramsViewPython from './AutocorrelogramsView.py';
+import ReactComponentPythonCompanion from '../ReactComponentPythonCompanion';
 
 class CorrelogramPlot extends Component {
     state = {}
@@ -85,65 +54,52 @@ class CorrelogramPlot extends Component {
 }
 
 class AutocorrelogramsView extends Component {
-    state = {
-        status: STATUS_WAITING,
-        error: null,
-        output: null
+    constructor(props) {
+        super(props)
+        this.state = {
+            status: '', // from python
+            error: null, // from python
+            output: null, // from python
+            download_from: props.kacheryManager.enabledKacheryNames()
+        }
+        this.pythonCompanion = new ReactComponentPythonCompanion(this, AutocorrelogramsViewPython);
+        this.pythonCompanion.syncPythonStateToState(['status', 'output', 'error'])
     }
+
     componentDidMount() {
-        this.setState({
-            status: STATUS_WAITING
-        });
+        this._updateJavaScriptState();
+        this.pythonCompanion.start();
+    }
+    componentWillUnmount() {
+        this.pythonCompanion.stop();
     }
     componentDidUpdate(prevProps) {
-        if (prevProps !== this.props) {
-            this.setState({
-                status: STATUS_WAITING
-            });
-        }
+        this._updateJavaScriptState();
     }
-    startCompute = async () => {
-        this.setState({
-            status: STATUS_RUNNING
-        });
-        let x = await computeAutoCorrelograms(this.props.kacheryManager, this.props.firingsPath, this.props.samplerate);
-        if (x.success) {
-            this.setState({
-                status: STATUS_FINISHED,
-                output: x.output
-            });
-        }
-        else {
-            this.setState({
-                status: STATUS_ERROR,
-                error: x.error
-            });
-        }
+    _updateJavaScriptState() {
+        this.pythonCompanion.setJavaScriptState({
+            downloadFrom: this.props.kacheryManager.enabledKacheryNames(),
+            firingsPath: this.props.firingsPath,
+            samplerate: this.props.samplerate
+        })
     }
     render() {
         const { status, output } = this.state;
-        if (status === STATUS_WAITING) {
-            return (
-                <div>
-                    <Button onClick={this.startCompute}>Compute autocorrelograms...</Button>
-                </div>
-            )
-        }
-        else if (status === STATUS_RUNNING) {
+        if (status === 'running') {
             return (
                 <div>
                     Computing autocorrelograms...
                 </div>
             )
         }
-        else if (status === STATUS_ERROR) {
+        else if (status === 'error') {
             return (
                 <div>
                     Error computing autocorrelograms: {this.state.error}
                 </div>
             )
         }
-        else {
+        else if (status === 'finished') {
             return (
                 <Grid container>
                     {
@@ -162,6 +118,9 @@ class AutocorrelogramsView extends Component {
                     }
                 </Grid>
             )
+        }
+        else {
+            return <div>Unexpected status: {status}</div>
         }
     }
 }

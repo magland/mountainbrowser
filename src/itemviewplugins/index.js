@@ -10,4 +10,5 @@ export { default as AttrViewPlugin } from "./franklab/AttrViewPlugin";
 export { default as DatsetViewPlugin } from "./franklab/DatasetViewPlugin";
 export { default as ElectricalSeriesPlugin } from "./franklab/ElectricalSeriesPlugin";
 export { default as NWBFilePlugin } from "./franklab/NWBFilePlugin";
+export { default as DevPlugin } from "./franklab/DevPlugin";
 

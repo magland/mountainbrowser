@@ -75,7 +75,7 @@ export default class UnitsTable extends Component {
                             unitInfo={ui} key={ui.unit_id}
                             selected={ui.unit_id === this.state.selectedUnitId}
                         />
-                    ))};
+                    ))}
                 </TableBody>
             </Table>
         );

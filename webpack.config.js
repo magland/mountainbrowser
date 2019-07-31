@@ -33,6 +33,13 @@ module.exports = {
 				],
 			},
 			{
+				// py files
+				test: /\.py$/i,
+				use: {
+					loader: 'raw-loader'
+				}
+			},
+			{
 				// Some image formats so you can import images
 				test: /\.(png|gif|jpg|svg)$/,
 				use: {

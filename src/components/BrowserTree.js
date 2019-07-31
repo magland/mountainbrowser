@@ -29,7 +29,9 @@ class NodeCreator {
             childNodes = this.createArrayHierarchyChildNodes(obj, max_array_children, 0, obj.length, path0);
         }
         else {
-            for (let key in obj) {
+            let keys = Object.keys(obj);
+            keys.sort();
+            for (let key of keys) {
                 let val = obj[key];
                 if (typeof (val) == 'object') {
                     childNodes.push(this.createObjectNode(val, key, path0));
@@ -99,10 +101,14 @@ class NodeCreator {
     createDirNode(X, name, basepath) {
         let childNodes = [];
         let path0 = this.joinPaths(basepath, name, '/');
-        for (let dname in X.dirs) {
+        let dnames = Object.keys(X.dirs);
+        dnames.sort();
+        for (let dname of dnames) {
             childNodes.push(this.createDirNode(X.dirs[dname], dname, path0));
         }
-        for (let fname in X.files) {
+        let fnames = Object.keys(X.files);
+        fnames.sort();
+        for (let fname of fnames) {
             childNodes.push(this.createFileNode(X.files[fname], fname, path0));
         }
         return {

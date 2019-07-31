@@ -42,7 +42,6 @@ class DatasetListView extends Component {
     render() {
         const { object } = this.props;
         const keys = Object.keys(object);
-        console.log('----', keys, object);
         return (
             <div>
                 <h4>Datasets</h4>

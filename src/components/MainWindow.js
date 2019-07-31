@@ -138,7 +138,6 @@ class MainWindow extends Component {
             selectedNodePath: path,
             currentItem: this.treeData.findNodeByPath(path)
         });
-        console.log('select item ----', path);
     }
 
     render() {

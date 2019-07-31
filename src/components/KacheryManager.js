@@ -165,7 +165,7 @@ export default class KacheryManager {
             obj = JSON.parse(txt);
         }
         catch (err) {
-            console.log(txt);
+            console.info(txt);
             console.error(err);
             console.error(`Error parsing text in loadObject for ${path}`);
             return null;

@@ -179,7 +179,6 @@ class NWBFileView extends Component {
         const epochs = (object.intervals || {}).epochs;
         const electrodes = ((object.general || {}).extracellular_ephys || {}).electrodes;
         const units = object.units;
-        console.log(units);
         return (
             <div>
                 {
